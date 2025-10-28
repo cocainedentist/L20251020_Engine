@@ -9,7 +9,7 @@ UCollisionComponent::~UCollisionComponent()
 {
 }
 
-bool UCollisionComponent::Checkcollision(const UCollisionComponent* Other)
+bool UCollisionComponent::CheckCollision(const UCollisionComponent* Other)
 {
 	if (Other->bIsOverlap)
 	{

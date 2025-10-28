@@ -2,11 +2,11 @@
 #include "SceneComponent.h"
 #include "SDL3/SDL.h"
 
-class UPaperflipbookComponent : public USceneComponent
+class UPaperFlipbookComponent : public USceneComponent
 {
 public:
-	UPaperflipbookComponent();
-	virtual ~UPaperflipbookComponent();
+	UPaperFlipbookComponent();
+	virtual ~UPaperFlipbookComponent();
 
 	virtual void Tick() override;
 

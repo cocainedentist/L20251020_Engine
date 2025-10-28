@@ -10,7 +10,7 @@ public:
 	virtual ~UCollisionComponent();
 
 	//virtual void SimulatePhysics();
-	bool Checkcollision(const UCollisionComponent* Other);
+	bool CheckCollision(const UCollisionComponent* Other);
 
 	bool bIsCollision = false;
 	bool bIsOverlap = true;

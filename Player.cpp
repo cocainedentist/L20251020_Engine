@@ -71,7 +71,7 @@ void APlayer::Tick()
 			UCollisionComponent* OtherCollision = dynamic_cast<UCollisionComponent*>(Component);
 			if (OtherCollision)
 			{
-				if (Collision->Checkcollision(OtherCollision))
+				if (Collision->CheckCollision(OtherCollision))
 				{
 					bFlag = true;
 					break;
