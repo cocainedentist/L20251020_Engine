@@ -7,10 +7,9 @@
 #include "Goal.h"
 
 
+
 AGameMode::AGameMode()
 {
-	bIsCollision = false;
-	bIsOverlap = false;
 }
 
 AGameMode::~AGameMode()
@@ -38,7 +37,7 @@ void AGameMode::Tick()
 			if (Player->GetActorLocation() == Actor->GetActorLocation())
 			{
 				//game over
-				exit(-1);
+				//exit(-1);
 				break;
 			}
 		}
@@ -51,13 +50,14 @@ void AGameMode::Tick()
 			if (Player->GetActorLocation() == Actor->GetActorLocation())
 			{
 				//complete
-				exit(-1);
+				//exit(-1);
 				break;
 			}
 		}
 	}
 
 
+	SDL_Log("deltaSeconds : %f", GEngine->GetWorldDeltaSeconds());
 
 	//if (Player == Monster)
 	//{
@@ -68,9 +68,4 @@ void AGameMode::Tick()
 	//{
 	//	complete
 	//}
-}
-
-void AGameMode::Render()
-{
-
 }

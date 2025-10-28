@@ -3,12 +3,24 @@
 #include "Actor.h"
 #include "World.h"
 #include <vector>
+#include "PaperFlipbookComponent.h"
+#include "Component.h"
+#include "CollisionComponent.h"
 
 AMonster::AMonster()
 {
-	ZOrder = 1001;
-	bIsCollision = true;
-	bIsOverlap = true;
+	Flipbook = new UPaperFlipbookComponent();
+	Flipbook->SetShape('M');
+	Flipbook->SetOwner(this);
+	Flipbook->ZOrder = 1001;
+	Flipbook->Color = SDL_Color{ 0, 0, 255, 0 };
+	AddComponent(Flipbook);
+
+	Collision = new UCollisionComponent();
+	Collision->SetOwner(this);
+	Collision->bIsCollision = true;
+	Collision->bIsOverlap = true;
+	AddComponent(Collision);
 }
 
 AMonster::~AMonster()
@@ -17,6 +29,14 @@ AMonster::~AMonster()
 
 void AMonster::Tick()
 {
+	TotalTime += (float)GEngine->GetWorldDeltaSeconds();
+	if (TotalTime <= ExecuteTime)
+	{
+		return;
+	}
+
+	TotalTime = 0.f;
+
 	int KeyCode = rand() % 4;
 
 	FVector2D SaveLocation;
@@ -45,10 +65,17 @@ void AMonster::Tick()
 
 	for (auto OtherActor : AllActors)
 	{
-		if (CheckCollsion(OtherActor))
+		for (auto Component : OtherActor->Components)
 		{
-			bFlag = true;
-			break;
+			UCollisionComponent* OtherCollision = dynamic_cast<UCollisionComponent*>(Component);
+			if (OtherCollision)
+			{
+				if (Collision->Checkcollision(OtherCollision))
+				{
+					bFlag = true;
+					break;
+				}
+			}
 		}
 	}
 

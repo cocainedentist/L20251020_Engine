@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Vector.h"
+#include <vector>
 
-//2d 
+class UComponent;
 
 class AActor
 {
@@ -13,8 +14,6 @@ public:
 	//virtual function table ->vftbl
 	//override
 	virtual void Tick(); //이건 자식이 재정의 할수도 있다.
-	virtual void Render();
-
 
 	__forceinline FVector2D GetActorLocation() const
 	{
@@ -28,36 +27,29 @@ public:
 		Location.Y = Value.Y;
 	}
 
-	__forceinline char GetShape() 
-	{
-		return Shape;
-	}
+	//template<typename T>
+	//UComponent* GetComponent<T>()
+	//{
+	//	dynamic_cast<T*>(Comepnot)
+	//}
 
-	void SetShape(char Value)
-	{
-		Shape = Value;
-	}
-
-	__forceinline int GetZOrder() const
-	{
-		return ZOrder;
-	}
-
-	//virtual void SimulatePhysics();
-	bool CheckCollsion(const AActor* Other);
 
 
 	virtual void ActorBeginOverlap();
 	virtual void Hit();
 
+	void AddComponent(UComponent* InComponent);
+
+	std::vector<class UComponent*> Components;
 
 protected:
 	FVector2D Location;
-	char Shape;
-	int ZOrder;
+
+
+	
 
 public:
-	bool bIsCollision = false; 
-	bool bIsOverlap = true;
+
+
 };
 

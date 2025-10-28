@@ -12,21 +12,52 @@
 #include "Goal.h"
 #include "Monster.h"
 #include "GameMode.h"
+#include "Timer.h"
+#include "Input.h"
+
 
 //FEngine* GEngine = nullptr;
 
 FEngine* FEngine::Instance = nullptr;
 
 FEngine::FEngine():
-	World(nullptr)
+	World(nullptr), MyEvent(SDL_Event())
 {
+	MyRenderer = nullptr;
+	MyWindow = nullptr;
+	Timer = new UTimer();
+	InputDevice = new UInput();
 }
 
 FEngine::~FEngine()
 {
+	if (World)
+	{
+		delete World;
+	}
+
+	if (Timer)
+	{
+		delete Timer;
+	}
+
+	if (InputDevice)
+	{
+		delete InputDevice;
+	}
 }
 
 void FEngine::Init()
+{
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+
+	MyWindow = SDL_CreateWindow("Engine", 800, 600, SDL_WINDOW_OPENGL);
+	MyRenderer = SDL_CreateRenderer(MyWindow, nullptr);
+
+	OpenLevel();
+}
+
+void FEngine::OpenLevel()
 {
 	srand((unsigned int)time(nullptr));
 
@@ -47,35 +78,35 @@ void FEngine::Init()
 				{
 					AActor* NewActor = new AWall();
 					NewActor->SetActorLocation(FVector2D(X, Y));
-					NewActor->SetShape(Line[X]);
+					//NewActor->SetShape(Line[X]);
 					World->SpawnActor(NewActor);
 				}
 				else if (Line[X] == 'P')
 				{
 					AActor* NewActor = new APlayer();
 					NewActor->SetActorLocation(FVector2D(X, Y));
-					NewActor->SetShape(Line[X]);
+					//NewActor->SetShape(Line[X]);
 					World->SpawnActor(NewActor);
 				}
 				else if (Line[X] == 'M')
 				{
 					AActor* NewActor = new AMonster();
 					NewActor->SetActorLocation(FVector2D(X, Y));
-					NewActor->SetShape(Line[X]);
+					//NewActor->SetShape(Line[X]);
 					World->SpawnActor(NewActor);
 				}
 				else if (Line[X] == 'G')
 				{
 					AActor* NewActor = new AGoal();
 					NewActor->SetActorLocation(FVector2D(X, Y));
-					NewActor->SetShape(Line[X]);
+					//NewActor->SetShape(Line[X]);
 					World->SpawnActor(NewActor);
 				}
 
 				{
 					AActor* NewActor = new AFloor();
 					NewActor->SetActorLocation(FVector2D(X, Y));
-					NewActor->SetShape(' ');
+					//NewActor->SetShape(' ');
 					World->SpawnActor(NewActor);
 				}
 			}
@@ -95,22 +126,41 @@ void FEngine::Run()
 {
 	while (bIsRunning)
 	{
+		Timer->Tick();
+
+		if (SDL_PollEvent(&MyEvent))
+		{
+			switch (MyEvent.type)
+			{
+			case SDL_QUIT:
+				bIsRunning = false;
+				break;
+			}
+		}
+
 		Input();
 		Tick();
 		Render();
+
 	}
 }
 
 void FEngine::Term()
 {
+	SDL_DestroyRenderer(MyRenderer);
+
+	SDL_DestroyWindow(MyWindow);
+
+	SDL_Quit();
 }
 
 void FEngine::Input()
 {
-	if (_kbhit())
-	{
-		KeyCode = _getch();
-	}
+	InputDevice->Tick();
+	//if (_kbhit())
+	//{
+	//	KeyCode = _getch();
+	//}
 }
 
 void FEngine::Tick()
@@ -120,6 +170,16 @@ void FEngine::Tick()
 
 void FEngine::Render()
 {
-//	system("cls");
+	SDL_SetRenderDrawColor(MyRenderer, 255, 255, 255, 0);
+	SDL_RenderClear(MyRenderer);
+
 	GetWorld()->Render();
+
+	SDL_RenderPresent(MyRenderer);
+}
+
+
+double FEngine::GetWorldDeltaSeconds() const
+{
+	return Timer->DeltaSeconds;
 }
